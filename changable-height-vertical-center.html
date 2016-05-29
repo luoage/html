@@ -1,0 +1,38 @@
+<!doctype html>
+<html>
+	<head>
+		<style>
+			*{padding:0;border:0;margin:0}
+			.wrap{margin:auto;max-width:1000px;}
+			.addition{height:100px;}
+			.box{height:200px;background-color:red;position:relative;top:0;left:0;}
+
+			.table{display:table;width:100%;}
+			.table .cell{display:table-cell;vertical-align:middle;}
+			.table .center-block{
+				background-color:yellow;
+				
+				margin:0 auto;
+				width:300px;
+			}
+		</style>
+	</head>
+	<body>
+		<!-- 可变高度垂直居中 -->
+		<!-- 需要三层结构 -->
+		<div class="wrap">
+			<div class="addition">
+				this is addition
+			</div>
+			<div class="box table">
+				<div class="cell">
+					<div class="center-block">
+						test test test test test test test test test
+						test test test test test test test test test
+						test test test test test test test test test
+					</div>
+				</div>
+			</div>
+		</div>
+	</body>
+</html>
