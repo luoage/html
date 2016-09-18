@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>卧槽这么叼</title>
+	<script type="text/javascript" src="http://apps.bdimg.com/libs/jquery/1.6.4/jquery.min.js"></script>
+	<style type="text/css">
+		body {
+			width:900px;
+			margin: 0 auto;
+		}
+		.a1 {
+			width: 100%;
+			background-color: #ccc;
+			float:left;
+		}
+		.a1 > div {
+			float:left;
+			width:30%;
+			border-left: 1px solid red;
+		}
+		.b1 {
+			width:200px;
+			height:50px;
+			background-color:red;
+			position: absolute;
+		}
+	</style>
+</head>
+<body>
+
+<div class="a1">
+	<div>b1</div>
+	<div>b2
+	<input type="text" id="input" />
+	</div>
+	<div>b3</div>
+</div>
+
+<div class="b1">333333333</div>
+
+<script type="text/javascript">
+
+	$('#input').bind('focus', function(){
+		var offset = $(this).offset();
+
+		offset.top += $(this).outerHeight();
+		console.log(offset);
+		$('.b1').css(offset);
+	});
+	
+
+
+</script>
+</body>
+</html>
