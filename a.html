@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
+	<meta http-equiv="Content-Type" content="text/html;charset=utf-8">
 	<title>卧槽这么叼</title>
 	<script type="text/javascript" src="http://apps.bdimg.com/libs/jquery/1.6.4/jquery.min.js"></script>
 	<style type="text/css">
@@ -20,26 +21,31 @@
 		}
 		.b1 {
 			width:200px;
-			height:50px;
-			background-color:red;
+			background-color:#ccc;
 			position: absolute;
 		}
 	</style>
 </head>
 <body>
 
-<div class="a1">
+<div class="a1" id="a1">
 	<div>b1</div>
 	<div>b2
-	<input type="text" id="input" />
+		<input type="text" id="input" />
 	</div>
 	<div>b3</div>
 </div>
 
-<div class="b1">333333333</div>
+<div class="b1">
+	<ul>
+		<li>大漠孤烟直</li>
+		<li>我值了值了直了</li>
+	</ul>
+</div>
 
 <script type="text/javascript">
-
+/*
+	//input框获取焦点后下面会出现一个区域
 	$('#input').bind('focus', function(){
 		var offset = $(this).offset();
 
@@ -47,8 +53,25 @@
 		console.log(offset);
 		$('.b1').css(offset);
 	});
-	
+*/
 
+// 事件的捕获阶段，目标阶段，冒泡阶段
+document.getElementById('input').addEventListener('click', function(e){
+	console.log('input bubble');
+	
+}, false);
+
+document.getElementById('input').addEventListener('click', function(e){
+	console.log('input capture');
+}, true);
+
+document.getElementById('a1').addEventListener('click', function(e){
+	console.log('a1 bubble');
+}, false);
+
+document.getElementById('a1').addEventListener('click', function(e){
+	console.log('a1 captcha');
+}, true);
 
 </script>
 </body>
