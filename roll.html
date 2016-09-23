@@ -12,45 +12,49 @@
 				background-color: #efefef;
 			}
 
-			* {
+			html,* {
 				padding: 0;
 				margin: 0;
 			}
 
 			.ball {
-				top: 0;
-				left: 0;
+				/*left:-25px;*/
 				position: absolute;
 				height: 50px;
 				width: 50px;
 				border-radius: 50%;
 				background-color: #ccc;
-  			/*background: radial-gradient(circle at 12.5px 12.5px, yellow, #000);*/ /* #03f6fb */
+			}
+			.yellow {
+				top: 0;
+				background: radial-gradient(circle at 12.5px 12.5px, yellow, #000);
 			}
 
+			.green { /* #03f6fb */
+				top: 450px;
+				background: radial-gradient(circle at 12.5px 12.5px, green, #000);
+			}
 			.wrap {
 				width: 100%;
 				height: 500px;
 				background-color: white;
+				position: relative;
+				top: 50px;
 			}
 
 		</style>
 	</head>
 	<body>
 
-		<div class="ball" id="ball"></div>
+		
 
-		<div class="wrap"></div>
+		<div class="wrap">
+			<div class="ball yellow" id="ball"></div>
+			<div class="ball green" id="ball1"></div>
+		</div>
 
 
 		<script>
-			var ball = $('#ball');
-			var i = 0;
-
-			setInterval(function() {
-				//ball.css({top: i++});
-			}, 1/24*1000);
-
 			/*
 			(function() {
 				var a = 10; // px/s
@@ -83,6 +87,80 @@
 
 			})();
 			*/
+		</script>
+
+
+
+		<script type="text/javascript">
+			;(function(){
+				var ball = $('#ball')
+				var ms = 450;
+				var a = 10;
+				var t = 0;
+				var delay = 40;
+				var s = 0;
+
+				var direction = true;
+
+				var interval = setInterval(function() {
+
+					if(s === ms){
+						direction = false
+					}
+					if(s === 0 ){
+						direction = true;
+					}
+					if(direction){
+						t += delay;
+					}else{
+						t -= delay;
+					}
+
+					t = t<0?0:t
+
+					s = a * Math.pow(t/1000, 2)/2;
+
+					s = s > ms ? ms : s;
+
+					ball.css({top: s });	
+				}, 5);
+
+				clearInterval(interval);
+			})();
+
+			;(function(){
+				var ball = $('#ball1')
+				var ms = 450;
+				var a = 10;
+				var t = Math.log2(ms*2/a) * 1000; // ms
+				var delay = 40;
+				var s = 450;
+
+				var direction = true;
+
+				var interval = setInterval(function() {
+
+					if(s === ms){
+						direction = false
+					}
+					if(s === 0 ){
+						direction = true;
+					}
+					if(direction){
+						t += delay;
+					}else{
+						t -= delay;
+					}
+
+					t = t<0?0:t
+
+					s = a * Math.pow(t/1000, 2)/2;
+
+					s = s > ms ? ms : s;
+
+					ball.css({top: s });	
+				}, 5);
+			})();
 		</script>
 	</body>
 </html>
