@@ -1,0 +1,88 @@
+<!doctype html>
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html;charset=utf-8">
+		<title>crazy ball</title>
+		<script type="text/javascript" src="http://apps.bdimg.com/libs/jquery/1.6.4/jquery.min.js"></script>
+		<style>
+			body {
+				position: relative;
+				width: 900px;
+				margin: 0 auto;
+				background-color: #efefef;
+			}
+
+			* {
+				padding: 0;
+				margin: 0;
+			}
+
+			.ball {
+				top: 0;
+				left: 0;
+				position: absolute;
+				height: 50px;
+				width: 50px;
+				border-radius: 50%;
+				background-color: #ccc;
+  			/*background: radial-gradient(circle at 12.5px 12.5px, yellow, #000);*/ /* #03f6fb */
+			}
+
+			.wrap {
+				width: 100%;
+				height: 500px;
+				background-color: white;
+			}
+
+		</style>
+	</head>
+	<body>
+
+		<div class="ball" id="ball"></div>
+
+		<div class="wrap"></div>
+
+
+		<script>
+			var ball = $('#ball');
+			var i = 0;
+
+			setInterval(function() {
+				//ball.css({top: i++});
+			}, 1/24*1000);
+
+			/*
+			(function() {
+				var a = 10; // px/s
+				var v0 = 0;
+				var t = 0;
+				var s = 0;
+				var os = 0;
+
+				var delay = 100;
+
+				var h = 100;
+
+				var obj = {
+				};
+
+
+				setInterval(function() {
+					t += delay/1000;
+
+					var s = a * Math.pow(t, 2)/2;
+
+					var iInterval = setInterval(function() {
+						$('#ball').css({top: ++os });
+					}, 1);
+
+					var os
+
+				}, delay);
+
+
+			})();
+			*/
+		</script>
+	</body>
+</html>
