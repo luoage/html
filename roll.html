@@ -277,7 +277,7 @@
 		remove(t) {
 			setTimeout(() => {
 				this.body.removeChild(this.div);
-			}, t);
+			}, t || 2000 );
 
 			return this;
 		}
@@ -285,22 +285,25 @@
 
 	var x = 0;
 	var target = $('#ball');
+	var wrap = $('#wrap');
+	var h = wrap.outerHeight() - target.outerHeight();
+	var w = wrap.outerWidth() - target.outerWidth();
 
-	var dot = new Dot;
 
-	var actY = new Accelerator(15, 450, 0.15, true);
-	var actX = new Accelerator(10, 850, 1.05, false);
+	var actY = new Accelerator(0, h, 0.15, true);
+	var actX = new Accelerator(0, w, 2.05, false);
 
 	actX.speedUp();
 	actY.speedUp();
 
+	var dot = new Dot;
 	var interval = setInterval(function() {
 
 		var y = actY.getValue();
 		var x = actX.getValue();
 
 		target.css({top: y, left: x});
-		new Dot().append(x+25, y+25).remove(1500);
+		new Dot().append(x+25, y+25).remove();
 
 	}, 10);
 
