@@ -48,47 +48,10 @@
 
 		
 
-		<div class="wrap">
+		<div class="wrap" id="wrap">
 			<div class="ball yellow" id="ball"></div>
-			<div class="ball green" id="ball1"></div>
+			<!-- <div class="ball green" id="ball1"></div> -->
 		</div>
-
-
-		<script>
-			/*
-			(function() {
-				var a = 10; // px/s
-				var v0 = 0;
-				var t = 0;
-				var s = 0;
-				var os = 0;
-
-				var delay = 100;
-
-				var h = 100;
-
-				var obj = {
-				};
-
-
-				setInterval(function() {
-					t += delay/1000;
-
-					var s = a * Math.pow(t, 2)/2;
-
-					var iInterval = setInterval(function() {
-						$('#ball').css({top: ++os });
-					}, 1);
-
-					var os
-
-				}, delay);
-
-
-			})();
-			*/
-		</script>
-
 
 
 		<script type="text/javascript">
@@ -125,42 +88,76 @@
 					ball.css({top: s });	
 				}, 5);
 
-				clearInterval(interval);
+				//clearInterval(interval);
 			})();
+		</script>
+		<script>
 
-			;(function(){
-				var ball = $('#ball1')
-				var ms = 450;
-				var a = 10;
-				var t = Math.log2(ms*2/a) * 1000; // ms
-				var delay = 40;
-				var s = 450;
+			var coord = function(target, maxX, maxY) {
+				this.target = target;
+				this.maxX = maxX - this.target.outerWidth();
+				this.maxY = maxY - this.target.outerHeight();
+			};
 
-				var direction = true;
+			coord.prototype = {
+				rule(x, y) {
+					var position = this.calculate(x, y);
 
-				var interval = setInterval(function() {
+					this.target.css(position);
+					return this;
+				},
 
-					if(s === ms){
-						direction = false
+				calculate(x, y) {
+					var left = this.min(this.maxX, x);
+					var top = this.min(this.maxY, y);
+
+					if(left === this.maxX || top === this.maxY){
+						position = this.fixPos(x, y);
+
+						if(left === this.maxX) {
+							top = position.y;
+						}
+
+						if(top === this.maxY) {
+							left = position.x;
+						}
 					}
-					if(s === 0 ){
-						direction = true;
-					}
-					if(direction){
-						t += delay;
-					}else{
-						t -= delay;
-					}
 
-					t = t<0?0:t
+					return {left};
+				},
 
-					s = a * Math.pow(t/1000, 2)/2;
+				fixPos(x, y) {
+					this.cacheX = this.cacheX || x;
+					this.cacheY = this.cacheY || y;
 
-					s = s > ms ? ms : s;
+					return {x: this.cacheX, y: this.cacheY};
+				},
 
-					ball.css({top: s });	
-				}, 5);
-			})();
+				min() {
+					return Math.min.apply(Math, arguments);
+				}
+			};
+
+			var target = $('#ball');
+			var wrap = $('#wrap');
+			var maxX = wrap.outerWidth();
+			var maxY = wrap.outerHeight();
+
+			var trace = new coord(target, maxX, maxY);
+
+			// s = v0t + at^2/2
+			//trace.set(30, 50);
+
+
+			var t = 0;
+
+			setInterval(function() {
+				t+= 3/4;
+
+				trace.rule(t, 1/10000*Math.pow(t, 2));
+
+			}, 1);
+
 		</script>
 	</body>
 </html>
