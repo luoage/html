@@ -1,37 +1,67 @@
 (function() {
-/*
-	Object.defineProperty(Function.prototype, 'extend', {
-		value: function(){
 
-		}
-	});
-*/
+	/**
+	 * 创建类
+	 *
+	 * @param {function} Sup
+	 * @return function
+	 */
+	var inherit = function(Sup){
+		Sup = Sup || function() {};
+
+		var F = function() {
+			this.initialize && this.initialize.apply(this, arguments);
+		};
+
+		F.prototype = new Sup;
+		F.prototype.constructor = F;
+		F.prototype.$parent = Sup;
+
+		F.$extend = function(proto) {
+			Object.assign(F.prototype, proto);
+
+			return F;
+		};
+
+		F.$exec = function(...args) {
+			return new F(...args);
+		};
+
+		return F;
+	};
+
 	/**
 	 * 加速机
 	 *
 	 * @constructor
 	 * @param {Number} pointer 初始位移
-	 * @param {Number} max 最大值
 	 * @param {Number} v0 初始速度
 	 * @param {Number} a 加速度(px/s^2)
+	 * @param {Number} max 最大值
+	 * @param {Number} min 最小值
 	 */
-	var Accelerator = function(pointer, max, v0, a) {
-		this.pointer = pointer;
-		this.max = max;
-		this.min = 0;
-		this.v0 = v0;
-		this.a = a;
+	var Accelerator = inherit().$extend({
+		initialize(v0, a, pointer, max, min) {
 
-		this._unitTime = 0.005; // 单位时间(s)
-		this._direction = true;
-		this._value = 0;
-	};
+			if (pointer > max || pointer < min) {
+				throw new Error('pointer param is wrong in Accelerator class');
+			}
 
-	Accelerator.prototype = {
+			this.min = 0;
+			this.v0 = v0;
+			this.pointer = pointer;
+			this.a = a;
+			this.max = max;
+			this.min = min;
+
+			this._unitTime = 0.005; // 单位时间(s)
+			this._direction = true;
+			this._value = 0;
+		},
 		getValue() {
-			var value = Math.max(Math.min(this._value, this.max), 0);
+			var value = Math.max(Math.min(this._value, this.max), this.min);
 
-			if (value === this.max || value === 0) {
+			if (value === this.max || value === this.min) {
 				this._direction = !this._direction;
 			}
 
@@ -46,13 +76,7 @@
 			var i = this.pointer;
 
 			this.interval = setInterval(() => {
-
-				if(this._direction){
-					i += 1;
-				} else {
-					i -= 1;
-				}
-
+				this._direction ? i++ : i--;
 				this._value = this.gravity(i);
 			}, this._unitTime * 1000);
 		},
@@ -60,9 +84,20 @@
 		gravity(x) {
 			return this.v0 * x + this.a * Math.pow(x, 2)/2;
 		}
+	});
 
-	};
-
+	/**
+	 * 给元素增加重力
+	 *
+	 * @constructor
+	 * @parent Accerator
+	 * @return
+	 */
+	var Gravity = inherit(Accelerator).$extend({
+		initialize(v0, a, pointer, max, min) {
+			new this.$parent().initialize.call(this, v0, a, pointer, max, min||0);
+		}
+	});
 
 
 	/**
@@ -101,8 +136,9 @@
 	var w = wrap.outerWidth() - target.outerWidth();
 
 
-	var actY = new Accelerator(0, h, 0, 0.2);
-	var actX = new Accelerator(0, w, 2, 0);
+	var actY = new Gravity(0, 0.2, 0, h);
+	var actX = new Gravity(2, 0, 0, w);
+
 
 	actX.speedUp();
 	actY.speedUp();
