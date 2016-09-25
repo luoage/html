@@ -12,8 +12,8 @@
 	 * @constructor
 	 * @param {Number} pointer 初始位移
 	 * @param {Number} max 最大值
+	 * @param {Number} v0 初始速度
 	 * @param {Number} a 加速度(px/s^2)
-	 * @param {boolean} gravity 是否有重力
 	 */
 	var Accelerator = function(pointer, max, v0, a) {
 		this.pointer = pointer;
