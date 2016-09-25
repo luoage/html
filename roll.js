@@ -57,6 +57,8 @@
 			this._unitTime = 0.005; // 单位时间(s)
 			this._direction = true;
 			this._value = 0;
+
+			this._ctime = 0;
 		},
 		getValue() {
 			var value = Math.max(Math.min(this._value, this.max), this.min);
@@ -73,16 +75,22 @@
 		},
 
 		speedUp() {
-			var i = this.pointer;
-
 			this.interval = setInterval(() => {
-				this._direction ? i++ : i--;
-				this._value = this.gravity(i);
+
+				this._direction ? this._ctime++ : this._ctime--;
+
+				this._value = this._displacement();
 			}, this._unitTime * 1000);
 		},
 
-		gravity(x) {
-			return this.v0 * x + this.a * Math.pow(x, 2)/2;
+		getVt() {
+			return this.v0 + this.a * this._ctime;
+		},
+
+		_displacement(t) {
+			var t = this._ctime;
+
+			return this.v0 * t + this.a * Math.pow(t, 2)/2;
 		}
 	});
 
@@ -96,7 +104,27 @@
 	var Gravity = inherit(Accelerator).$extend({
 		initialize(v0, a, pointer, max, min) {
 			new this.$parent().initialize.call(this, v0, a, pointer, max, min||0);
+
+			this.mass = 1;
+			this.energyPercent = 0.2; // 每次撞击默认减少20%的能量
+		},
+
+		// E = M * vt ^2/2 能量
+		// W = FS
+		// S = v0t + at^2/2
+		getEnergy() {
+			return this.mass * Math.pow(this.getVt(), 2)/2;
+		},
+
+		/**
+		 * 撞击后能量减少，影响初始速度
+		 *
+		 * @param {number} energyPercent 减少百分比
+		 */
+		impact(energyPercent) {
+
 		}
+
 	});
 
 
@@ -151,6 +179,8 @@
 
 		target.css({top: y, left: x});
 		new Dot().append(x+25, y+25).remove();
+
+		//console.log(actY.getEnergy());
 
 	}, 10);
 
