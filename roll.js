@@ -1,12 +1,32 @@
 (function() {
 
+	//
+	// E = m * v^2/2
+	// 能量(J) = 质量(kg) * 速度(米)的平方
+	//
+	// W = FS
+	// 力(N) * 米(m) = 焦耳(J)
+	//
+	// W = Mgh
+	// 质量(m) * 重力(g) * 高度(h) = 势能(J)
+	//
+	// S = v0t + at^2/2
+	// 位移 = 初始速度 * 时间 + 加速度 * 时间平方 / 2
+	// m = m/s * s + m/s^2 * s^2 /2
+	//
+	// 单位时间 = 0.005s, 高度 = 450px， 加速度 a = 0.2px/s^2, 质量 m = 1kg
+	//
+	// 单位时间内速度的变化量是加速度
+	//
+	//
+	//
+
 	/**
 	 * 创建类
-	 *
-	 * @param {function} Sup
-	 * @return function
+	 * @param {function|class|constructor} Sup
+	 * @return constructor
 	 */
-	var inherit = function(Sup){
+	function inherit(Sup){
 		Sup = Sup || function() {};
 
 		var F = function() {
@@ -29,6 +49,135 @@
 
 		return F;
 	};
+
+	/**
+	 * 动能
+	 * W = FS, F = mg = 1kg * 0.2
+	 *
+	 * @param {object} opts
+	 * @example {max: 最大边界, v0: 初始速度, acceleration: 加速度}
+	 *
+	 */
+	var Work = inherit().$extend({
+		initialize(opts) {
+			this.initMax = opts.max; // 最大边界
+			this.acceleration = opts.acceleration; // 加速度/重力 (m/s^2)
+			this.initV0 = opts.v0; //初始速度
+
+			this.weight = 1; // 重量(kg)
+			this.impactLoss = 0.02; // 每次撞击能量减少百分比
+
+			this._unitTime = 0.005; // 单位时间(s)
+			this._ctime = 0; // 时间
+			this._atime = 0;
+			this._impactTime = 0; // 是否撞击
+		},
+
+		/**
+		 * 获取当前的物体能量
+		 * E = mv^2/2
+		 *
+		 * @param {Number} v 速度
+		 * @return number 单位焦耳(J)
+		 */
+		vEnergy(v) {
+			return this.weight * Math.pow(v, 2) / 2;
+		},
+
+		/**
+		 * 能量 = 动能 + 势能
+		 * W = mgh
+		 *
+		 * @param {Number} s 高度或者长度
+		 * @return number 单位焦耳(J)
+		 */
+		energy(v0, s) {
+			return this.weight * this.acceleration * s + this.vEnergy(v0);
+		},
+
+		/**
+		 * 物体下落一段距离后速度
+		 *
+		 * @param {number} v0 初始速度
+		 * @param {number} s 位移
+		 * @return
+		 */
+		realVelocity(v0, s) {
+			return Math.log2(this.energy(v0, s) * 2 / this.weight);
+		},
+
+		/**
+		 * 上帝
+		 *
+		 * @return void
+		 */
+		god() {
+			this._interval = setInterval(() => {
+
+				this._ctime ++;
+				this._atime ++;
+
+			}, this._unitTime * 1000);
+		},
+
+		/**
+		 * 上帝已死
+		 *
+		 * @return void
+		 */
+		die() {
+			this._interval && clearInterval(this._interval);
+		},
+
+		/**
+		 * 位移
+		 *
+		 * @return {number}
+		 */
+		shift() {
+			var v0 = this._impactTime ? this.vt : this.initV0;
+			var max = this.max === undefined ? this.initMax : this.max;
+
+
+			var s = v0 * this._ctime + this.acceleration * Math.pow(this._ctime, 2)/2;
+
+			s = Math.min(max, s);
+
+			if(s === max) {
+				this.impact(v0);
+			}
+
+			return s;
+		},
+
+		// 向下为正向, 否则为反向
+		direction() {
+			return this._impactTime % 2 ? 1 : -1;
+		}
+
+		/**
+		 * 撞击
+		 *
+		 * @param s 位移
+		 * @return {number} 初始速度
+		 */
+		impact(v0) {
+			debugger;
+
+			var max = this.max || this.initMax;
+			var energy = this.energy(v0, max) * (1 - this.impactLoss);
+
+			console.log(energy, this.weight);
+
+			this.vt = Math.log2(energy * 2 /this.weight);
+			this.max = energy / (this.weight * this.acceleration);
+
+			this._impactTime ++;
+			this._ctime = 0;
+		}
+
+
+	});
 
 	/**
 	 * 加速机
@@ -163,7 +312,23 @@
 	var h = wrap.outerHeight() - target.outerHeight();
 	var w = wrap.outerWidth() - target.outerWidth();
 
+	var workY = new Work({max: h, v0: 0, acceleration: 0.05});
 
+	workY.god();
+
+	var interval = setInterval(function() {
+
+		var y = workY.shift();
+		console.log(y);
+
+		target.css({top: y});
+
+	}, 10);
+
+	clearInterval(interval);
+
+
+	/*
 	var actY = new Gravity(0, 0.2, 0, h);
 	var actX = new Gravity(2, 0, 0, w);
 
@@ -180,10 +345,9 @@
 		target.css({top: y, left: x});
 		new Dot().append(x+25, y+25).remove();
 
-		//console.log(actY.getEnergy());
-
 	}, 10);
 
 	// clearInterval(interval);
+	*/
 
 })();
