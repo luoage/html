@@ -1,4 +1,4 @@
-(function() {
+//(function() {
 
 	//
 	// E = m * v^2/2
@@ -30,7 +30,7 @@
 		Sup = Sup || function() {};
 
 		var F = function() {
-			this.initialize && this.initialize.apply(this, arguments);
+			return this.initialize && this.initialize.apply(this, arguments);
 		};
 
 		F.prototype = new Sup;
@@ -134,25 +134,31 @@
 		 *
 		 * @return {number}
 		 */
-		shift() {
+		shifting() {
 			var v0 = this._impactTime ? this.vt : this.initV0;
 			var max = this.max === undefined ? this.initMax : this.max;
 
 
-			var s = v0 * this._ctime + this.acceleration * Math.pow(this._ctime, 2)/2;
+			var s = this.direction() * v0 * this._ctime + this.acceleration * Math.pow(this._ctime, 2)/2;
 
 			s = Math.min(max, s);
 
 			if(s === max) {
-				this.impact(v0);
+				this.chDirection(v0);
 			}
 
 			return s;
 		},
 
-		// 向下为正向, 否则为反向
+		// 向下为正向, 向上为反
 		direction() {
-			return this._impactTime % 2 ? 1 : -1;
+			return this._impactTime % 2 === 1 ? 1 : -1;
+		},
+		// 向上运动
+		up() {
+		},
+		// 向下运动
+		down() {
 		}
 
 		/**
@@ -161,18 +167,20 @@
 		 * @param s 位移
 		 * @return {number} 初始速度
 		 */
-		impact(v0) {
-			debugger;
+		chDirection(v0) {
+			this._impactTime ++;
 
 			var max = this.max || this.initMax;
-			var energy = this.energy(v0, max) * (1 - this.impactLoss);
+
+			var height = this.direction === -1 ? max : 0;
+
+			var energy = this.energy(v0, height) * (1 - this.impactLoss);
 
 			console.log(energy, this.weight);
 
 			this.vt = Math.log2(energy * 2 /this.weight);
 			this.max = energy / (this.weight * this.acceleration);
 
-			this._impactTime ++;
 			this._ctime = 0;
 		}
 
@@ -318,7 +326,7 @@
 
 	var interval = setInterval(function() {
 
-		var y = workY.shift();
+		var y = workY.shifting();
 		console.log(y);
 
 		target.css({top: y});
@@ -350,4 +358,4 @@
 	// clearInterval(interval);
 	*/
 
-})();
+//})();
